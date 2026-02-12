@@ -16,5 +16,3 @@ Congratulations! You've successfully completed the RAG crash course and seen how
 * Vector search provides semantic understanding
 * Chunking improves retrieval precision
 * Complete pipelines integrate all components seamlessly
-
-You now have the knowledge to build your own RAG systems! 🚀
