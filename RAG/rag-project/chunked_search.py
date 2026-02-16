@@ -10,8 +10,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 print("🔍 Chunked Vector Search Demo")
 print("=" * 50)
-
-# Initialize ChromaDB and model
 client = chromadb.Client()
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
