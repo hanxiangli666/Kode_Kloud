@@ -10,32 +10,32 @@ Once layers have been defined, then define the flow through the layers as follow
 """
 import torch
 # Import the nn module
-import ____.____ as nn 
+import torch.nn as nn 
 import torch.nn.functional as F
 
 # Create a Neural Network that inherits the Neural Network module
-class ____(____.____):
+class NeuralNetwork(nn.Module):
     # Function for defining layers
     def __init__(self):
-        # Initialize superclass for automatic parameters
-        super(____, self).__init__()
+        # Initialize superclass for automatic parameter initialization
+        super(NeuralNetwork, self).__init__()
         # Define a 2D convolutional layer
-        self.conv1 = ____.____(in_channels=3, out_channels=16, kernel_size=3)
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3)
         # Define a 2D max pooling layer
-        self.pool = ____.____(kernel_size=2, stride=2)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         # Define a fully connected layer
-        self.fc1 = ____.____(16 * 16 * 16, 1)
+        self.fc1 = nn.Linear(16 * 16 * 16, 1)
 
     # Function for defining flow through the network. 
     def forward(self, x):
         # Pass through conv layer with ReLU activation, then apply max pooling
-        x = self.____(F.____(self.____(x)))
+        x = self.pool(F.relu(self.conv1(x)))
         # Flatten the output from the convolutional layers
         x = x.view(-1, 16 * 16 * 16)
         # Apply Sigmoid for probalities from the fully connected layer
-        x = torch.sigmoid(self.____(x))
+        x = torch.sigmoid(self.fc1(x))
         # Pass through fully connected layer with ReLU activation
-        x = F.____(self.____(x))
+        x = F.relu(self.fc1(x))
         
         return x
     
