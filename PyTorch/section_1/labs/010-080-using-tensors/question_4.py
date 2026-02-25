@@ -5,7 +5,7 @@ Print the size and the device attributes.
 """
 import torch
 
-tensor = torch.____(____)
+tensor = torch.zeros((3, 3, 5))
 
-print(tensor.shape, tensor.____)
+print(tensor.shape, tensor.device)
 

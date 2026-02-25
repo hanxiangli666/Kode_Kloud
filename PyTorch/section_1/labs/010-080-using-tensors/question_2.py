@@ -3,6 +3,6 @@ Randomly create a one dimension tensor that consists of 5 values and print its s
 """
 import torch
 
-tensor = ____.____(____)
+tensor = torch.rand(5)
 
-print(tensor.____)
+print(tensor.size())

@@ -5,6 +5,6 @@ NOTE: Each list should consist of 4 values.
 """
 import torch 
 
-tensor = torch.____(____)
+tensor = torch.tensor([[1, 2, 3, 4], [5, 6, 7, 8]])
 
-print(tensor.____)
+print(tensor.size())
