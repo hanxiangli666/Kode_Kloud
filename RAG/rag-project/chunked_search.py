@@ -8,12 +8,15 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# 启动提示 / Startup banner
 print("🔍 Chunked Vector Search Demo")
 print("=" * 50)
+
+# 初始化向量库与模型 / Initialize vector DB and embedding model
 client = chromadb.Client()
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-# Sample policy document
+# 示例文档 / Sample policy document
 policy_document = """
 TechCorp Remote Work Policy
 
@@ -47,54 +50,58 @@ Documents must be stored in approved cloud systems only.
 Regular security training must be completed.
 """
 
+# 展示文档信息 / Show document info
 print("📄 Sample Policy Document:")
 print(f"Length: {len(policy_document)} characters")
 print()
 
-# Test 1: Search WITHOUT chunking
+# 测试1：不切分检索 / Test 1: Search WITHOUT chunking
 print("🔧 Test 1: Search WITHOUT Chunking")
 print("-" * 40)
 
-# Create collection for non-chunked search
+# 创建未切分集合 / Create collection for non-chunked search
 collection_no_chunking = client.create_collection("no_chunking")
 
-# Store entire document as single chunk
+# 整文作为单块存储 / Store entire document as single chunk
 collection_no_chunking.add(
     documents=[policy_document],
     ids=["full_document"]
 )
 
+# 输出存储情况 / Report storage status
 print("Stored entire document as single chunk")
 print()
 
-# Test 2: Search WITH chunking
+# 测试2：切分后检索 / Test 2: Search WITH chunking
 print("🔧 Test 2: Search WITH Chunking")
 print("-" * 40)
 
-# Create collection for chunked search
+# 创建切分集合 / Create collection for chunked search
 collection_chunked = client.create_collection("chunked")
 
-# Split document into chunks
+# 文档切分 / Split document into chunks
 splitter = RecursiveCharacterTextSplitter(
     chunk_size=300,
     chunk_overlap=50,
     separators=["\n\n", "\n", " ", ""]
 )
 
+# 执行切分并输出数量 / Split and report count
 chunks = splitter.split_text(policy_document)
 print(f"Split document into {len(chunks)} chunks")
 
-# Store chunks in vector database
+# 存入向量库 / Store chunks in vector database
 chunk_ids = [f"chunk_{i+1}" for i in range(len(chunks))]
 collection_chunked.add(
     documents=chunks,
     ids=chunk_ids
 )
 
+# 输出存储情况 / Report storage status
 print("Stored chunks in vector database")
 print()
 
-# Test queries
+# 测试查询 / Test queries
 test_queries = [
     "What are the internet speed requirements?",
     "Can I use my personal laptop for work?",
@@ -102,6 +109,7 @@ test_queries = [
     "How often do I need to check in with my manager?"
 ]
 
+# 对比输出 / Comparison output
 print("🔍 Search Performance Comparison:")
 print("=" * 50)
 
@@ -109,13 +117,13 @@ for query in test_queries:
     print(f"\nQuery: '{query}'")
     print("-" * 30)
     
-    # Search without chunking
+    # 不切分检索 / Search without chunking
     results_no_chunking = collection_no_chunking.query(
         query_texts=[query],
         n_results=1
     )
     
-    # Search with chunking
+    # 切分检索 / Search with chunking
     results_chunked = collection_chunked.query(
         query_texts=[query],
         n_results=2
@@ -133,6 +141,7 @@ for query in test_queries:
         print(f"  Result: {doc[:100]}...")
         print(f"  Benefit: Focused, relevant information!")
 
+# 总结切分优势 / Summarize chunking benefits
 print("\n💡 Chunking Benefits for Search:")
 print("✅ More precise and relevant results")
 print("✅ Focused information instead of entire documents")
@@ -141,12 +150,14 @@ print("✅ Easier to find specific information")
 print("✅ Improved user experience")
 print("✅ Better context for LLM generation")
 
+# 性能摘要 / Performance summary
 print("\n📊 Performance Summary:")
 print(f"Without chunking: 1 large document, hard to find specific info")
 print(f"With chunking: {len(chunks)} focused chunks, precise results")
 
-# Create completion marker
+# 写入完成标记 / Write completion marker
 with open("chunked_search_complete.txt", "w") as f:
     f.write("Chunked search demo completed successfully")
 
+# 完成提示 / Completion banner
 print("\n✅ Chunked search demo completed!")

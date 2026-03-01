@@ -8,7 +8,7 @@ import os
 import sys
 import subprocess
 
-# Required packages for this lab
+# 本实验所需包 / Required packages for this lab
 REQUIRED_PACKAGES = [
     ("chromadb", "chromadb"),
     ("langchain", "langchain"),
@@ -19,12 +19,14 @@ REQUIRED_PACKAGES = [
     ("sentence-transformers", "sentence_transformers"),
 ]
 
+# 检查 Python 版本 / Check Python version
 def check_python_version():
     """Check Python version"""
     version = sys.version_info
     print(f"  ✅ Python {version.major}.{version.minor}.{version.micro}")
     return version.major >= 3 and version.minor >= 9
 
+# 检查虚拟环境 / Check virtual environment
 def check_virtual_env():
     """Check if running in virtual environment"""
     print("\n🐍 Virtual Environment Check:")
@@ -42,6 +44,7 @@ def check_virtual_env():
         print("="*60)
         return False
 
+# 检查包是否可导入 / Check if a package can be imported
 def check_package_installed(import_name):
     """Check if a package can be imported"""
     try:
@@ -50,6 +53,7 @@ def check_package_installed(import_name):
     except ImportError:
         return False
 
+# 安装缺失包 / Install missing packages
 def install_packages(packages):
     """Install packages using uv pip"""
     if not packages:
@@ -74,7 +78,7 @@ def install_packages(packages):
             print(f"  ❌ Installation failed: {result.stderr}")
             return False
     except FileNotFoundError:
-        # Try with pip if uv is not available
+        # uv 不可用时退回 pip / Try pip if uv is not available
         print("  ⚠️  uv not found, trying pip...")
         try:
             cmd = [sys.executable, "-m", "pip", "install"] + packages
@@ -92,6 +96,7 @@ def install_packages(packages):
         print(f"  ❌ Error installing packages: {e}")
         return False
 
+# 检查并安装依赖 / Check and install dependencies
 def check_and_install_packages():
     """Check all required packages and install missing ones"""
     print("\n📦 Checking Required Packages:")
@@ -112,14 +117,14 @@ def check_and_install_packages():
             print(f"  ❌ {package_name} - MISSING")
             missing_packages.append(package_name)
     
-    # Auto-install missing packages
+    # 自动安装缺失包 / Auto-install missing packages
     if missing_packages:
         print("\n" + "-"*50)
         print("🔧 Auto-installing missing packages...")
         print("-"*50)
         
         if install_packages(missing_packages):
-            # Verify installation by trying imports again
+            # 重新验证导入 / Verify installation by importing again
             print("\n📦 Verifying installation...")
             still_missing = []
             for package_name, import_name in REQUIRED_PACKAGES:
@@ -140,6 +145,7 @@ def check_and_install_packages():
     
     return True
 
+# 检查 API 配置 / Check API configuration
 def check_api_config():
     """Verify API configuration for agentic chunking"""
     print("\n🔑 Checking API Configuration:")
@@ -158,8 +164,10 @@ def check_api_config():
     else:
         print("  ⚠️  OPENAI_API_BASE not found (needed for Task 6: Agentic Chunking)")
 
-    return True  # API config is optional for most tasks
+    # API 配置非必需 / API config is optional for most tasks
+    return True
 
+# 测试关键导入 / Test required imports
 def test_imports():
     """Test if we can import all required modules"""
     print("\n🔬 Testing Module Imports:")
@@ -184,6 +192,7 @@ def test_imports():
     
     return all_good
 
+# 检查 spaCy 模型 / Check spaCy model
 def check_spacy_model():
     """Check if spaCy English model is available and download if missing"""
     print("\n🧠 Checking spaCy Model:")
@@ -208,14 +217,15 @@ def check_spacy_model():
                     return True
                 else:
                     print("  ⚠️  Could not download spaCy model (sentence chunking will use fallback)")
-                    return True  # Not critical
+                    return True  # 非关键 / Not critical
             except Exception as e:
                 print(f"  ⚠️  Could not download spaCy model: {e}")
-                return True  # Not critical - has fallback
+                return True  # 非关键 / Not critical
     except ImportError:
         print("  ❌ spaCy not installed")
         return False
 
+# 主流程 / Main entry
 def main():
     """Run all environment checks"""
     print("="*60)
@@ -224,7 +234,7 @@ def main():
     
     print("\n🐍 Python Version Check:")
 
-    # CRITICAL: Check virtual environment first
+    # 关键：先检查虚拟环境 / CRITICAL: check virtual env first
     venv_active = check_virtual_env()
 
     if not venv_active:
@@ -232,22 +242,22 @@ def main():
         print("   Then run this script again.")
         sys.exit(1)
 
-    # Check Python version
+    # 检查 Python 版本 / Check Python version
     python_ok = check_python_version()
 
-    # Check and auto-install packages
+    # 检查并安装依赖 / Check and auto-install packages
     packages_ok = check_and_install_packages()
 
-    # Test imports
+    # 测试导入 / Test imports
     imports_ok = test_imports()
 
-    # Check spaCy model
+    # 检查 spaCy 模型 / Check spaCy model
     spacy_ok = check_spacy_model()
 
-    # Check API config
+    # 检查 API 配置 / Check API config
     api_ok = check_api_config()
 
-    # Summary
+    # 汇总结果 / Summary
     checks = {
         "Python Version": python_ok,
         "Required Packages": packages_ok,
@@ -267,7 +277,7 @@ def main():
         if not passed:
             all_passed = False
 
-    # Create marker file if all checks pass
+    # 所有检查通过则写标记 / Create marker file if all checks pass
     if all_passed:
         marker_dir = "/home/lab-user/rag-project"
         os.makedirs(marker_dir, exist_ok=True)
@@ -288,5 +298,6 @@ def main():
         print("="*60)
         sys.exit(1)
 
+# 入口保护 / Entry point guard
 if __name__ == "__main__":
     main()

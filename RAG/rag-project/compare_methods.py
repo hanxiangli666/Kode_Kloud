@@ -10,6 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from rank_bm25 import BM25Okapi
 from utils import get_doc_info
 
+# 简单字符串匹配 / Simple grep-like search
 def grep_search(query, documents):
     """Simple grep-like search - exact keyword matching"""
     results = []
@@ -23,6 +24,7 @@ def grep_search(query, documents):
     results.sort(key=lambda x: x[1], reverse=True)
     return results
 
+# TF-IDF 检索 / TF-IDF search
 def tfidf_search(query, documents):
     """TF-IDF search using sklearn"""
     vectorizer = TfidfVectorizer()
@@ -34,6 +36,7 @@ def tfidf_search(query, documents):
     results.sort(key=lambda x: x[1], reverse=True)
     return results
 
+# BM25 检索 / BM25 search
 def bm25_search(query, documents):
     """BM25 search using rank_bm25"""
     tokenized_docs = [re.sub(r'[^a-zA-Z\s]', '', doc.lower()).split() for doc in documents]
@@ -45,43 +48,46 @@ def bm25_search(query, documents):
     results.sort(key=lambda x: x[1], reverse=True)
     return results
 
+# 主流程 / Main entry
 def main():
     """Main function to compare search methods"""
     print("🔍 Search Methods Comparison")
     print("=" * 60)
     
-    # Load documents from techcorp-docs
+    # 读取文档 / Load documents from techcorp-docs
     docs, doc_paths = get_doc_info()
     print()
     
-    # Test query
+    # 测试查询 / Test query
     query = "remote work policy"
     print(f"🔎 Testing query: '{query}'")
     print("=" * 60)
     
-    # Grep search
+    # Grep 检索 / Grep search
     print("\n1️⃣ GREP SEARCH (Exact keyword matching):")
     grep_results = grep_search(query, docs)
     for rank, (doc_idx, count) in enumerate(grep_results[:3], 1):
         print(f"  {rank}. Doc {doc_idx+1}: {count} matches - {docs[doc_idx][:80]}...")
     
-    # TF-IDF search
+    # TF-IDF 检索 / TF-IDF search
     print("\n2️⃣ TF-IDF SEARCH (Term frequency-inverse document frequency):")
     tfidf_results = tfidf_search(query, docs)
     for rank, (doc_idx, score) in enumerate(tfidf_results[:3], 1):
         print(f"  {rank}. Doc {doc_idx+1}: Score {score:.4f} - {docs[doc_idx][:80]}...")
     
-    # BM25 search
+    # BM25 检索 / BM25 search
     print("\n3️⃣ BM25 SEARCH (Okapi BM25 with document length normalization):")
     bm25_results = bm25_search(query, docs)
     for rank, (doc_idx, score) in enumerate(bm25_results[:3], 1):
         print(f"  {rank}. Doc {doc_idx+1}: Score {score:.4f} - {docs[doc_idx][:80]}...")
     
+    # 输出总结 / Print summary
     print(f"\n✅ Search methods comparison completed!")
     print("\n💡 Key Insights:")
     print("- Grep: Simple exact matching, good for specific terms")
     print("- TF-IDF: Balances term frequency with document rarity")
     print("- BM25: Advanced ranking with document length normalization")
 
+# 入口保护 / Entry point guard
 if __name__ == "__main__":
     main()

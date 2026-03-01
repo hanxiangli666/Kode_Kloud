@@ -7,39 +7,41 @@ from rank_bm25 import BM25Okapi
 import re
 from utils import get_doc_info
 
+# 启动提示 / Startup banner
 print("🔍 BM25 Search Demo")
 print("=" * 50)
 
-# Load documents from techcorp-docs
+# 读取文档 / Load documents from techcorp-docs
 docs, doc_paths = get_doc_info()
 print(f"📚 Loaded {len(docs)} documents\n")
 
-# Tokenize documents
+# 文档分词 / Tokenize documents
 tokenized_docs = [re.sub(r'[^a-zA-Z\s]', '', doc.lower()).split() for doc in docs]
 
-# Create BM25 index
+# 创建 BM25 索引 / Create BM25 index
 bm25 = BM25Okapi(tokenized_docs)
 
-# Example searches
+# 示例查询 / Example searches
 queries = ["remote work policy", "health insurance benefits", "pet policy dogs"]
 
 for query in queries:
     print(f"🔎 Searching for: '{query}'")
     
-    # Tokenize query
+    # 查询分词 / Tokenize query
     tokenized_query = re.sub(r'[^a-zA-Z\s]', '', query.lower()).split()
     
-    # Get BM25 scores
+    # 计算 BM25 分数 / Get BM25 scores
     scores = bm25.get_scores(tokenized_query)
     
-    # Get top results
+    # 取最高分结果 / Get top results
     top_indices = scores.argsort()[-3:][::-1]
     
     print("Results:")
     for i, idx in enumerate(top_indices, 1):
-        # Show only document path and score
+        # 仅显示文件名和分数 / Show only filename and score
         doc_name = doc_paths[idx].split('/')[-1]  # Just the filename
         print(f"  {i}. Score: {scores[idx]:.4f} - {doc_name}")
     print()
 
+# 完成提示 / Completion banner
 print("✅ BM25 search completed!")

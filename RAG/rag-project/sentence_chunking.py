@@ -7,10 +7,11 @@ Using spaCy for better sentence boundary detection
 from langchain_text_splitters import SpacyTextSplitter
 import spacy
 
+# 启动提示 / Startup banner
 print("✂️ Sentence-Aware Chunking Demo")
 print("=" * 50)
 
-# Download spaCy model if not already present
+# 加载 spaCy 模型（若缺失则提示）/ Load spaCy model if available
 try:
     nlp = spacy.load("en_core_web_sm")
     print("✅ spaCy model loaded successfully")
@@ -19,7 +20,7 @@ except OSError:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
     nlp = None
 
-# Sample document with complex sentences
+# 示例文档：复杂句子 / Sample document with complex sentences
 sample_document = """
 TechCorp Security Policy and Remote Work Guidelines
 
@@ -34,12 +35,13 @@ Regular security training sessions are mandatory for all remote workers, coverin
 Incident reporting procedures require immediate notification of any security breaches, suspicious activities, or potential data exposures to the IT security team. Employees must report incidents within 2 hours of discovery using the designated security hotline or email system. Delayed reporting may result in disciplinary action and potential legal consequences.
 """
 
+# 展示文档信息 / Show document info
 print("📄 Sample Document:")
 print(f"Length: {len(sample_document)} characters")
 print(f"Complex sentences with multiple clauses")
 print()
 
-# Test 1: Basic character-based chunking
+# 测试1：基础字符切分 / Test 1: Basic character-based chunking
 print("🔧 Test 1: Basic Character-Based Chunking")
 print("-" * 50)
 
@@ -56,14 +58,14 @@ basic_chunks = basic_splitter.split_text(sample_document)
 print(f"Created {len(basic_chunks)} chunks:")
 for i, chunk in enumerate(basic_chunks, 1):
     print(f"Chunk {i}: {chunk[:100]}...")
-    # Check if chunk breaks mid-sentence
+    # 检查是否断句 / Check sentence boundary
     if not chunk.strip().endswith(('.', '!', '?')):
         print("  ⚠️  Breaks mid-sentence!")
     else:
         print("  ✅ Ends at sentence boundary")
     print()
 
-# Test 2: Sentence-aware chunking (if spaCy available)
+# 测试2：句子感知切分（需 spaCy）/ Test 2: Sentence-aware chunking
 if nlp:
     print("🔧 Test 2: Sentence-Aware Chunking with spaCy")
     print("-" * 50)
@@ -78,13 +80,14 @@ if nlp:
     print(f"Created {len(sentence_chunks)} chunks:")
     for i, chunk in enumerate(sentence_chunks, 1):
         print(f"Chunk {i}: {chunk[:100]}...")
-        # Check if chunk breaks mid-sentence
+        # 检查是否断句 / Check sentence boundary
         if not chunk.strip().endswith(('.', '!', '?')):
             print("  ⚠️  Breaks mid-sentence!")
         else:
             print("  ✅ Ends at sentence boundary")
         print()
     
+    # 输出对比 / Print comparison
     print("🔍 Comparison:")
     print("Basic chunking:")
     print("  - May break mid-sentence")
@@ -97,9 +100,11 @@ if nlp:
     print("  - More natural chunk breaks")
     print("  - Better for NLP processing")
 else:
+    # spaCy 不可用时提示 / Warn when spaCy not available
     print("⚠️  spaCy not available - skipping sentence-aware chunking demo")
     print("💡 Install spaCy with: python -m spacy download en_core_web_sm")
 
+# 总结优势 / Summarize benefits
 print("💡 Sentence Boundary Benefits:")
 print("✅ Preserves complete thoughts and ideas")
 print("✅ Better semantic coherence")
@@ -107,8 +112,9 @@ print("✅ More natural chunk breaks")
 print("✅ Improved readability")
 print("✅ Better for language processing")
 
-# Create completion marker
+# 写入完成标记 / Write completion marker
 with open("sentence_chunking_complete.txt", "w") as f:
     f.write("Sentence chunking demo completed successfully")
 
+# 完成提示 / Completion banner
 print("\n✅ Sentence chunking demo completed!")

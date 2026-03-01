@@ -7,17 +7,18 @@ Demonstrate semantic search using ChromaDB
 import chromadb
 from sentence_transformers import SentenceTransformer
 
+# 启动提示 / Startup banner
 print("🔍 Vector Search Demo")
 print("=" * 50)
 
-# Initialize ChromaDB and model
+# 初始化向量库与模型 / Initialize vector DB and model
 print("1. Setting up search system...")
 client = chromadb.Client()
 collection = client.create_collection("techcorp_docs")
 model = SentenceTransformer('all-MiniLM-L6-v2')
 print("   ✅ Search system ready")
 
-# Add some sample documents
+# 添加示例文档 / Add sample documents
 print("2. Adding sample documents...")
 sample_docs = [
     "TechCorp allows remote work up to 3 days per week with manager approval",
@@ -32,7 +33,7 @@ collection.add(
 )
 print(f"   ✅ Added {len(sample_docs)} sample documents")
 
-# Test queries
+# 测试查询 / Test queries
 print("3. Testing vector search...")
 test_queries = [
     "Can I work from home?",
@@ -45,19 +46,20 @@ print()
 for i, query in enumerate(test_queries, 1):
     print(f"Query {i}: '{query}'")
     
-    # Search using ChromaDB
+    # 执行向量检索 / Search using ChromaDB
     results = collection.query(
         query_texts=[query],
         n_results=2
     )
     
-    # Show results
+    # 输出结果 / Show results
     for j, (doc, distance) in enumerate(zip(results['documents'][0], results['distances'][0])):
         similarity = 1 - distance
         print(f"   {j+1}. Similarity: {similarity:.3f} - {doc}")
     
     print()
 
+# 总结优势 / Summarize benefits
 print("💡 Vector Search Benefits:")
 print("✅ Understands meaning, not just keywords")
 print("✅ Finds relevant documents even with different wording")

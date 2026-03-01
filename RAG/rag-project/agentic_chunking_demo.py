@@ -14,24 +14,27 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# 程序启动提示 / Startup banner
 print("🤖 Agentic Chunking Demo")
 print("=" * 50)
 
-# Configuration - using environment variables for API access
+# 配置：使用环境变量读取 API 设置 / Config: read API settings from env vars
 API_KEY = os.environ.get("OPENAI_API_KEY")
 API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 MODEL_NAME = "openai/gpt-4.1-mini"
 
+# 如果没有 API Key 就直接退出 / Exit if API key is missing
 if not API_KEY:
     print("❌ Error: OPENAI_API_KEY not found.")
     print("Please ensure the environment is configured correctly.")
     sys.exit(1)
 
+# 打印当前使用的端点和模型 / Show selected endpoint and model
 print(f"🔌 API Endpoint: {API_BASE}")
 print(f"🧠 Model: {MODEL_NAME}")
 print()
 
-# Sample document with multiple distinct topics
+# 示例文档：包含多个不同主题 / Sample document with multiple topics
 sample_document = """
 TechCorp Company Overview
 
@@ -44,22 +47,24 @@ Remote Work Policy: Employees may work remotely up to 3 days per week with manag
 Future Vision: Looking ahead, TechCorp is betting big on quantum computing. We plan to invest $1B over the next 5 years in R&D for quantum technologies. Our goal is to be the first company to offer commercial quantum cloud services by 2030. This investment will create new positions for quantum researchers and engineers across all our locations.
 """
 
+# 显示示例文档的基本信息 / Show basic info for the sample doc
 print("📄 Sample Document:")
 print(f"Length: {len(sample_document)} characters")
 print(f"Contains 4 distinct topics: History, Products, Remote Work, Future")
 print()
 
-# First, let's compare with basic chunking
+# 先与基础切分方式做对比 / Compare with basic chunking first
 print("🔧 Comparison: Basic Chunking vs Agentic Chunking")
 print("-" * 50)
 
-# Basic character-based chunking
+# 基础切分：按字符数进行切块 / Basic chunking by character count
 basic_splitter = RecursiveCharacterTextSplitter(
     chunk_size=400,
     chunk_overlap=50,
     separators=["\n\n", "\n", " ", ""]
 )
 
+# 生成基础切分结果并预览 / Build basic chunks and preview
 basic_chunks = basic_splitter.split_text(sample_document)
 print(f"\n📊 Basic Chunking Result: {len(basic_chunks)} chunks")
 print("   (Based on character count, may split mid-topic)")
@@ -68,22 +73,24 @@ for i, chunk in enumerate(basic_chunks, 1):
     print(f"   Chunk {i}: {preview}...")
 print()
 
-# Agentic chunking using LLM
+# 使用 LLM 进行 Agentic Chunking / Agentic chunking with an LLM
 def agentic_chunking(text):
     """
     Uses an LLM to split text into semantically distinct chunks.
     The AI analyzes topic shifts and creates meaningful boundaries.
     """
+    # 提示正在进行语义分析 / Indicate semantic analysis is running
     print("🤔 Agent is analyzing the document for semantic topic shifts...")
     
+    # 初始化 LLM 客户端 / Initialize LLM client
     llm = ChatOpenAI(
         model=MODEL_NAME,
         openai_api_key=API_KEY,
         openai_api_base=API_BASE,
-        temperature=0  # Deterministic output for consistency
+        temperature=0  # 确保输出稳定 / Deterministic output for consistency
     )
 
-    # The Prompt: Instruct the LLM to act as a "Chunking Agent"
+    # 构造提示词：让模型充当“切分代理” / Prompt: instruct the model to chunk
     prompt = ChatPromptTemplate.from_messages([
         ("system", """You are an expert document editor specializing in semantic document analysis.
 Your task is to split the provided text into semantically distinct chunks based on topic shifts.
@@ -98,27 +105,32 @@ Rules:
         ("user", "{text}")
     ])
 
+    # 组合链路：提示词 -> 模型 -> 文本输出解析 / Chain: prompt -> model -> parser
     chain = prompt | llm | StrOutputParser()
     
     try:
+        # 调用模型并按分隔符切分输出 / Invoke and split by delimiter
         response = chain.invoke({"text": text})
-        # Split the response by our delimiter and clean up
+        # 按分隔符切分并清理 / Split by delimiter and clean up
         chunks = [c.strip() for c in response.split("---SPLIT---") if c.strip()]
         return chunks
     except Exception as e:
+        # 捕获 API 错误并返回空结果 / Handle API errors and return empty result
         print(f"\n❌ API Error: {e}")
         return []
 
-# Run agentic chunking
+# 执行 Agentic Chunking / Run agentic chunking
 agentic_chunks = agentic_chunking(sample_document)
 
+# 根据是否有结果输出不同内容 / Branch based on result presence
 if agentic_chunks:
     print(f"\n📊 Agentic Chunking Result: {len(agentic_chunks)} chunks")
     print("   (Based on semantic meaning and topic shifts)")
     print()
     
+    # 逐块判断主题并打印预览 / Detect topic and print preview per chunk
     for i, chunk in enumerate(agentic_chunks, 1):
-        # Identify the likely topic from the chunk
+        # 从内容判断主题 / Identify the likely topic from the chunk
         if "History" in chunk or "Founded" in chunk:
             topic = "Company History"
         elif "Product" in chunk or "CloudSuite" in chunk:
@@ -136,7 +148,7 @@ if agentic_chunks:
         print(f"   Preview: {preview}...")
         print()
 
-    # Comparison summary
+    # 对比总结 / Comparison summary
     print("🔍 Comparison Summary:")
     print("-" * 50)
     print(f"Basic Chunking:   {len(basic_chunks)} chunks (character-based)")
@@ -162,10 +174,11 @@ if agentic_chunks:
     print("• Best for smaller documents or preprocessing")
     print("• May need fallback for very large documents")
     
-    # Create completion marker
+    # 写入完成标记文件 / Write completion marker file
     with open("agentic_chunking_complete.txt", "w") as f:
         f.write("Agentic chunking demo completed successfully")
     
     print("\n✅ Agentic chunking demo completed!")
 else:
+    # 无结果时提示检查 API / Warn when no chunks returned
     print("\n⚠️ Agent failed to produce chunks. Check API connection.")

@@ -6,10 +6,11 @@ Demonstrates the importance of overlap for context preservation
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# 启动提示 / Startup banner
 print("✂️ Overlap Chunking Demo")
 print("=" * 50)
 
-# Sample document with context that spans chunk boundaries
+# 示例文档：上下文跨边界 / Sample document with cross-boundary context
 sample_document = """
 TechCorp Equipment Reimbursement Policy
 
@@ -29,11 +30,12 @@ Section 5: Return Policy
 If employment ends within 12 months of purchase, equipment must be returned to the company. Equipment becomes employee property after 12 months of continuous employment. Returned equipment will be inspected for damage and normal wear.
 """
 
+# 展示文档信息 / Show document info
 print("📄 Sample Document:")
 print(f"Length: {len(sample_document)} characters")
 print()
 
-# Test 1: Chunking WITHOUT overlap
+# 测试1：无重叠切分 / Test 1: Chunking WITHOUT overlap
 print("🔧 Test 1: Chunking WITHOUT Overlap")
 print("-" * 40)
 
@@ -50,7 +52,7 @@ for i, chunk in enumerate(chunks_no_overlap, 1):
     print(f"Chunk {i}: {chunk[:80]}...")
 print()
 
-# Test 2: Chunking WITH overlap
+# 测试2：有重叠切分 / Test 2: Chunking WITH overlap
 print("🔧 Test 2: Chunking WITH Overlap")
 print("-" * 40)
 
@@ -67,7 +69,7 @@ for i, chunk in enumerate(chunks_with_overlap, 1):
     print(f"Chunk {i}: {chunk[:80]}...")
 print()
 
-# Show the difference
+# 展示差异 / Show the difference
 print("🔍 Overlap Analysis:")
 print("Without overlap - potential context loss:")
 print("  Chunk 1 ends: '...Part-time employees are not eligible'")
@@ -81,6 +83,7 @@ print("  Chunk 2 starts: 'This policy applies to full-time remote workers only. 
 print("  ✅ Context preserved across boundaries!")
 print()
 
+# 总结优势 / Summarize benefits
 print("💡 Overlap Benefits:")
 print("✅ Preserves context across chunk boundaries")
 print("✅ Prevents loss of important information")
@@ -88,8 +91,9 @@ print("✅ Improves search accuracy")
 print("✅ Better semantic understanding")
 print("✅ Reduces false negatives in search")
 
-# Create completion marker
+# 写入完成标记 / Write completion marker
 with open("overlap_chunking_complete.txt", "w") as f:
     f.write("Overlap chunking demo completed successfully")
 
+# 完成提示 / Completion banner
 print("\n✅ Overlap chunking demo completed!")

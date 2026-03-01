@@ -6,14 +6,15 @@ Shows why document chunking is essential for RAG systems
 
 import chromadb
 
+# 启动提示 / Startup banner
 print("✂️ Document Chunking Problem Demo")
 print("=" * 40)
 
-# Initialize ChromaDB and model
+# 初始化向量库 / Initialize ChromaDB
 client = chromadb.Client()
 collection = client.create_collection("policies")
 
-# Create a large document
+# 构造大文档 / Create a large document
 large_document = """
 TechCorp Employee Handbook - Remote Work Policy
 
@@ -36,21 +37,23 @@ Performance evaluations will be conducted quarterly.
 Remote work performance will be assessed based on deliverables and communication.
 """
 
-# Store the large document as a single chunk
+# 整文单块存储 / Store the large document as a single chunk
 collection.add(
     documents=[large_document],
     ids=["large_document"]
 )
 
+# 发起检索 / Run search
 print("🔍 Searching for: 'internet speed requirements'")
 print()
 
-# Search for specific information
+# 检索指定信息 / Search for specific information
 results = collection.query(
     query_texts=["internet speed requirements"],
     n_results=1
 )
 
+# 展示问题 / Show problem with result
 result_text = results['documents'][0][0]
 print("❌ Problem: Returns entire document!")
 print(f"Result: {result_text[:200]}...")
@@ -59,6 +62,6 @@ print("💡 Solution: Break document into chunks!")
 print("✅ Each chunk contains specific information")
 print("✅ Better search precision")
 
-# Create completion marker
+# 写入完成标记 / Write completion marker
 with open("chunking_problem_complete.txt", "w") as f:
     f.write("Chunking problem demo completed")

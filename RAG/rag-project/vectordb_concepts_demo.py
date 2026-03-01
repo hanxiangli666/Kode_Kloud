@@ -4,14 +4,15 @@ Vector Database Concepts Demo
 Shows why we need vector databases for storing embeddings
 """
 
+# 启动提示 / Startup banner
 print("🗄️ Vector Database Concepts Demo")
 print("=" * 50)
 
-# Simulate storing embeddings in memory vs vector database
+# 对比内存存储与向量库 / Compare memory vs vector database
 print("📊 Memory Storage vs Vector Database")
 print()
 
-# Memory storage simulation
+# 内存存储示例 / Memory storage simulation
 print("1. Memory Storage (Simple but limited):")
 print("   - Store embeddings in Python list/dict")
 print("   - Fast access but limited by RAM")
@@ -19,7 +20,7 @@ print("   - Data lost when program stops")
 print("   - Hard to share between processes")
 print()
 
-# Vector database benefits
+# 向量库优势 / Vector database benefits
 print("2. Vector Database (Production ready):")
 print("   - Persistent storage on disk")
 print("   - Optimized for similarity search")
@@ -28,7 +29,7 @@ print("   - Survives system restarts")
 print("   - Can be shared across applications")
 print()
 
-# Show the difference
+# 输出关键优势 / Highlight key benefits
 print("💡 Key Benefits of Vector Databases:")
 print("✅ Persistent storage - data survives restarts")
 print("✅ Scalability - handle millions of vectors")

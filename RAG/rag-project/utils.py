@@ -6,24 +6,27 @@ Common utilities for RAG search methods
 import os
 import glob
 
+# 读取 TechCorp 文档 / Read TechCorp documents
 def read_techcorp_docs():
     """Read all documents from techcorp-docs directory"""
     docs = []
     doc_paths = []
     
-    # Try different possible paths
+    # 尝试多种路径 / Try different possible paths
     possible_paths = [
         "/home/lab-user/techcorp-docs/**/*.md",  # Lab environment
         "techcorp-docs/**/*.md",                  # Local development
         "./techcorp-docs/**/*.md"                # Current directory
     ]
     
+    # 搜索匹配文件 / Find matching files
     files = []
     for pattern in possible_paths:
         files = glob.glob(pattern, recursive=True)
         if files:
             break
     
+    # 读取文件内容 / Read file contents
     for file_path in files:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
@@ -36,10 +39,12 @@ def read_techcorp_docs():
     
     return docs, doc_paths
 
+# 打印并返回文档信息 / Print and return document info
 def get_doc_info():
     """Get document information for display"""
     docs, paths = read_techcorp_docs()
     
+    # 展示文档概要 / Display document summaries
     print(f"📚 Loaded {len(docs)} documents")
     print("\nDocuments:")
     for i, (doc, path) in enumerate(zip(docs, paths)):
