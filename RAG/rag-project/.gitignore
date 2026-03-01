@@ -1,0 +1,25 @@
+# Never commit secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local outputs / markers from demos
+*_complete.txt
+environment_verified.txt
+vectordb_initialized.txt
+vectordb_saved.txt
+documents_stored.txt
+sentence_chunking_complete.txt
+agentic_chunking_complete.txt
+chunked_search_complete.txt
+
+# Local backups
+vectordb_backup.json
+
+# OS
+.DS_Store
+Thumbs.db

@@ -12,34 +12,91 @@ This script demonstrates **Agentic Chunking** - the most advanced chunking metho
 where an AI model analyzes the document and decides optimal split points based on
 topic shifts and semantic coherence, rather than arbitrary character counts.
 """
+
 import os
 import sys
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
+from pathlib import Path
+
+# 导入：LangChain 组件与切分器 / Imports: LangChain components and splitters
+# 说明：本脚本使用 LangChain 的 ChatOpenAI 调用模型，并用文本切分器做基线对比 / This script uses LangChain ChatOpenAI and a splitter for baseline comparison.
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-# 程序启动提示 / Startup banner
+
+def load_dotenv(dotenv_path: Path, override: bool = False) -> None:
+    """Minimal .env loader (no extra dependency).
+
+    - Supports: KEY=VALUE
+    - Ignores: blank lines and lines starting with '#'
+    - override=True means .env wins over existing environment variables
+    """
+
+    # 读取 .env：不存在则直接跳过 / Load .env: skip silently if missing
+    if not dotenv_path.exists():
+        return
+
+    # 逐行解析 KEY=VALUE / Parse KEY=VALUE lines
+    for raw_line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if not key:
+            continue
+
+        # 写入环境变量：override=True 时以 .env 为准 / Write env vars: when override=True, .env wins
+        if override or key not in os.environ:
+            os.environ[key] = value
+
+
+def sanitize_api_key(api_key: str) -> str:
+    # 清理 key：去掉首尾空白与可能的 Bearer 前缀 / Sanitize: trim whitespace and optional Bearer prefix
+    api_key = (api_key or "").strip()
+    if api_key.lower().startswith("bearer "):
+        api_key = api_key[7:].strip()
+    return api_key
+
+
+# 启动横幅：便于在终端中区分脚本输出 / Startup banner: easy to spot in terminal output
 print("🤖 Agentic Chunking Demo")
 print("=" * 50)
 
-# 配置：使用环境变量读取 API 设置 / Config: read API settings from env vars
-API_KEY = os.environ.get("OPENAI_API_KEY")
-API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
-MODEL_NAME = "openai/gpt-4.1-mini"
+# 路径定位：以当前脚本目录作为项目根 / Path: use script directory as project root
+project_dir = Path(__file__).resolve().parent
 
-# 如果没有 API Key 就直接退出 / Exit if API key is missing
+# 加载配置：优先读取同目录 .env，并覆盖同名环境变量 / Config: load .env (same folder) and override existing vars
+load_dotenv(project_dir / ".env", override=True)
+
+# 读取 OpenAI 相关配置 / Read OpenAI-related settings
+API_KEY = sanitize_api_key(os.environ.get("OPENAI_API_KEY", ""))
+API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1").strip()
+MODEL_NAME = os.environ.get("OPENAI_MODEL_NAME", "gpt-4.1-mini").strip()
+
+# 关键检查：没有 key 就无法进行 Agentic Chunking / Guard: without API key, agentic chunking cannot run
 if not API_KEY:
     print("❌ Error: OPENAI_API_KEY not found.")
-    print("Please ensure the environment is configured correctly.")
+    print("Please create/update the .env file in this folder:")
+    print(f"  {project_dir}\\.env")
+    print("And set OPENAI_API_KEY=...")
     sys.exit(1)
 
-# 打印当前使用的端点和模型 / Show selected endpoint and model
+# 安全诊断：只打印长度/尾部，不泄露完整 key / Safe diagnostics: never print full key
+key_has_whitespace = any(ch.isspace() for ch in API_KEY)
+key_tail = API_KEY[-4:] if len(API_KEY) >= 4 else "(short)"
+print(f"🔐 API key loaded: length={len(API_KEY)}, tail={key_tail}, whitespace={key_has_whitespace}")
+
+# 输出当前端点与模型：便于确认走的是哪个环境配置 / Show endpoint & model: confirm runtime configuration
 print(f"🔌 API Endpoint: {API_BASE}")
 print(f"🧠 Model: {MODEL_NAME}")
 print()
 
-# 示例文档：包含多个不同主题 / Sample document with multiple topics
+# 示例文档：包含多个主题段落，用于展示“语义切分”的优势 / Sample doc: multiple topics to showcase semantic chunking
 sample_document = """
 TechCorp Company Overview
 
@@ -52,52 +109,51 @@ Remote Work Policy: Employees may work remotely up to 3 days per week with manag
 Future Vision: Looking ahead, TechCorp is betting big on quantum computing. We plan to invest $1B over the next 5 years in R&D for quantum technologies. Our goal is to be the first company to offer commercial quantum cloud services by 2030. This investment will create new positions for quantum researchers and engineers across all our locations.
 """
 
-# 显示示例文档的基本信息 / Show basic info for the sample doc
+# 文档概览：长度与主题数量 / Document overview: length and topic count
 print("📄 Sample Document:")
 print(f"Length: {len(sample_document)} characters")
-print(f"Contains 4 distinct topics: History, Products, Remote Work, Future")
+print("Contains 4 distinct topics: History, Products, Remote Work, Future")
 print()
 
-# 先与基础切分方式做对比 / Compare with basic chunking first
+# 对比实验：先做基础切分，再做 agentic 切分 / Comparison: basic chunking first, then agentic chunking
 print("🔧 Comparison: Basic Chunking vs Agentic Chunking")
 print("-" * 50)
 
-# 基础切分：按字符数进行切块 / Basic chunking by character count
+# 基线切分器：字符长度 + 分隔符优先级 / Baseline splitter: character length + separator priority
 basic_splitter = RecursiveCharacterTextSplitter(
     chunk_size=400,
     chunk_overlap=50,
-    separators=["\n\n", "\n", " ", ""]
+    separators=["\n\n", "\n", " ", ""],
 )
 
-# 生成基础切分结果并预览 / Build basic chunks and preview
+# 生成基础 chunks 并打印预览 / Build basic chunks and print previews
 basic_chunks = basic_splitter.split_text(sample_document)
 print(f"\n📊 Basic Chunking Result: {len(basic_chunks)} chunks")
 print("   (Based on character count, may split mid-topic)")
 for i, chunk in enumerate(basic_chunks, 1):
-    preview = chunk[:60].replace('\n', ' ').strip()
+    preview = chunk[:60].replace("\n", " ").strip()
     print(f"   Chunk {i}: {preview}...")
 print()
 
-# 使用 LLM 进行 Agentic Chunking / Agentic chunking with an LLM
-def agentic_chunking(text):
-    """
-    Uses an LLM to split text into semantically distinct chunks.
-    The AI analyzes topic shifts and creates meaningful boundaries.
-    """
-    # 提示正在进行语义分析 / Indicate semantic analysis is running
+
+def agentic_chunking(text: str) -> list[str]:
+    # Agentic Chunking：让 LLM 判断主题边界并输出分隔符 / Agentic chunking: let the LLM decide topic boundaries
     print("🤔 Agent is analyzing the document for semantic topic shifts...")
-    
-    # 初始化 LLM 客户端 / Initialize LLM client
+
+    # 初始化 ChatOpenAI：使用环境变量提供的 key/base/model / Initialize ChatOpenAI with env-provided key/base/model
     llm = ChatOpenAI(
-        model=MODEL_NAME,
+        model_name=MODEL_NAME,
         openai_api_key=API_KEY,
         openai_api_base=API_BASE,
-        temperature=0  # 确保输出稳定 / Deterministic output for consistency
+        temperature=0,
     )
 
-    # 构造提示词：让模型充当“切分代理” / Prompt: instruct the model to chunk
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an expert document editor specializing in semantic document analysis.
+    # 构造提示词：要求输出以 ---SPLIT--- 分隔的原文 chunks / Prompt: request chunks separated by ---SPLIT--- without rewriting content
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                """You are an expert document editor specializing in semantic document analysis.
 Your task is to split the provided text into semantically distinct chunks based on topic shifts.
 
 Rules:
@@ -106,36 +162,36 @@ Rules:
 3. Each chunk should be about ONE coherent topic
 4. Output the chunks separated by '---SPLIT---'
 5. Do not modify the original text - just split it at appropriate boundaries
-6. Include section headers with their content in the same chunk"""),
-        ("user", "{text}")
-    ])
+6. Include section headers with their content in the same chunk""",
+            ),
+            ("user", "{text}"),
+        ]
+    )
 
-    # 组合链路：提示词 -> 模型 -> 文本输出解析 / Chain: prompt -> model -> parser
+    # 链路：Prompt -> LLM -> 字符串解析 / Chain: prompt -> LLM -> parse string output
     chain = prompt | llm | StrOutputParser()
-    
+
     try:
-        # 调用模型并按分隔符切分输出 / Invoke and split by delimiter
+        # 调用模型并按分隔符切块 / Invoke model and split by delimiter
         response = chain.invoke({"text": text})
-        # 按分隔符切分并清理 / Split by delimiter and clean up
-        chunks = [c.strip() for c in response.split("---SPLIT---") if c.strip()]
-        return chunks
+        return [c.strip() for c in response.split("---SPLIT---") if c.strip()]
     except Exception as e:
-        # 捕获 API 错误并返回空结果 / Handle API errors and return empty result
+        # 错误处理：API 失败时返回空列表，不让脚本崩溃 / Error handling: return [] on API failures
         print(f"\n❌ API Error: {e}")
         return []
 
-# 执行 Agentic Chunking / Run agentic chunking
+
+# 执行 agentic chunking：得到语义 chunks / Run agentic chunking: produce semantic chunks
 agentic_chunks = agentic_chunking(sample_document)
 
-# 根据是否有结果输出不同内容 / Branch based on result presence
+# 结果展示：有结果就逐块打印主题与预览 / Display: print topic and preview per chunk when available
 if agentic_chunks:
     print(f"\n📊 Agentic Chunking Result: {len(agentic_chunks)} chunks")
     print("   (Based on semantic meaning and topic shifts)")
     print()
-    
-    # 逐块判断主题并打印预览 / Detect topic and print preview per chunk
+
+    # 简单主题识别：用关键词猜测该 chunk 的主题 / Lightweight topic labeling by keywords
     for i, chunk in enumerate(agentic_chunks, 1):
-        # 从内容判断主题 / Identify the likely topic from the chunk
         if "History" in chunk or "Founded" in chunk:
             topic = "Company History"
         elif "Product" in chunk or "CloudSuite" in chunk:
@@ -146,14 +202,14 @@ if agentic_chunks:
             topic = "Future Vision"
         else:
             topic = "General"
-        
+
         print(f"📦 Chunk {i} - Topic: {topic}")
         print(f"   Length: {len(chunk)} characters")
-        preview = chunk[:80].replace('\n', ' ').strip()
+        preview = chunk[:80].replace("\n", " ").strip()
         print(f"   Preview: {preview}...")
         print()
 
-    # 对比总结 / Comparison summary
+    # 对比总结：基础切分 vs 语义切分 / Summary: basic vs semantic
     print("🔍 Comparison Summary:")
     print("-" * 50)
     print(f"Basic Chunking:   {len(basic_chunks)} chunks (character-based)")
@@ -166,24 +222,12 @@ if agentic_chunks:
     print("✅ AI understands context and meaning")
     print("✅ No arbitrary character limit splitting")
     print()
-    
-    print("💡 When to Use Agentic Chunking:")
-    print("✅ Documents with clear topic sections")
-    print("✅ When semantic coherence is critical")
-    print("✅ Complex documents with mixed content")
-    print("✅ When retrieval quality matters more than speed")
-    print()
-    
-    print("⚠️  Considerations:")
-    print("• Requires LLM API calls (cost and latency)")
-    print("• Best for smaller documents or preprocessing")
-    print("• May need fallback for very large documents")
-    
-    # 写入完成标记文件 / Write completion marker file
-    with open("agentic_chunking_complete.txt", "w") as f:
+
+    # 写入完成标记：便于课程步骤检查 / Write completion marker for course workflow
+    with open("agentic_chunking_complete.txt", "w", encoding="utf-8") as f:
         f.write("Agentic chunking demo completed successfully")
-    
-    print("\n✅ Agentic chunking demo completed!")
+
+    print("✅ Agentic chunking demo completed!")
 else:
-    # 无结果时提示检查 API / Warn when no chunks returned
+    # 无结果：通常是 API 配置/权限/网络问题 / No chunks: commonly API config/permission/network issue
     print("\n⚠️ Agent failed to produce chunks. Check API connection.")
