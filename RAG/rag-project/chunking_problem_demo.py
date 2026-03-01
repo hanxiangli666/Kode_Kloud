@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示不切分导致检索返回整篇文档的问题; This script demonstrates the problem of retrieving whole documents without chunking.
+# 2) 它实现了将大文档整体写入向量库并查询的反例; It implements a counterexample by storing a full document and querying it.
+# 3) 使用的 AI 技术是向量数据库检索，但刻意缺少切分步骤; The AI technique is vector retrieval, deliberately without chunking.
+# 4) 在整个脚本集合中，它是动机与痛点展示的环节; In the full set, it serves as the motivation and pain-point demo.
+# 5) 它与后续 chunked_search.py 形成因果关系，推动改进方案; It leads directly to chunked_search.py as the fix.
 """
 Chunking Problem Demo
 Shows why document chunking is essential for RAG systems

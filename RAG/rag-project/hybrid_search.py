@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示 TF-IDF 与 BM25 的加权混合检索; This script demonstrates weighted hybrid retrieval of TF-IDF and BM25.
+# 2) 它实现了双模型评分并按权重融合排序; It implements dual scoring and weighted fusion ranking.
+# 3) 使用的 AI 技术是传统检索的分数融合，为混合检索做准备; The AI technique is score fusion for hybrid retrieval.
+# 4) 在本目录中，它连接纯关键词检索与向量检索思路; In this folder, it links keyword retrieval to vector-based thinking.
+# 5) 它与 compare_methods.py 与 semantic_search_demo.py 共同构成检索演进链; It forms the retrieval evolution chain with compare_methods.py and semantic_search_demo.py.
 """
 Hybrid Search Implementation
 Combines TF-IDF and BM25 scores with different weights

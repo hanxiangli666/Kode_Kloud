@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本展示关键词检索在语义查询上的失败; This script shows keyword search failing on semantic queries.
+# 2) 它实现了 TF-IDF 检索并展示分数不足的案例; It implements TF-IDF retrieval and surfaces weak matches.
+# 3) 使用的 AI 技术是基于词项的向量化，局限于字面匹配; The AI technique is term-based vectorization with lexical limits.
+# 4) 在整体脚本中，它是引出语义检索需求的关键节点; In the overall set, it triggers the need for semantic search.
+# 5) 它与 semantic_search_demo.py 前后衔接，形成问题与解决的关系; It pairs with semantic_search_demo.py as problem and solution.
 """
 Keyword Search Limitations Demo
 Shows why keyword search fails for semantic queries

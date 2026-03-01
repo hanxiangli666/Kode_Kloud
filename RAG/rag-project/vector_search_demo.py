@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示使用 ChromaDB 进行向量检索; This script demonstrates vector search using ChromaDB.
+# 2) 它实现了样本文档写入与多查询相似度检索; It implements sample ingestion and multi-query similarity search.
+# 3) 使用的 AI 技术是句向量嵌入与向量库近邻检索; AI techniques used are embeddings and vector DB nearest-neighbor search.
+# 4) 在学习路径中，它是语义检索落地的核心示例; In the learning path, it is the core semantic retrieval example.
+# 5) 它与 store_documents.py 和 init_vectordb.py 共同构成最小可运行链路; It combines with store_documents.py and init_vectordb.py for a runnable path.
 """
 Vector Search Demo
 Demonstrate semantic search using ChromaDB

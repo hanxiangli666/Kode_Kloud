@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示向量库数据落盘与备份思路; This script demonstrates persisting and backing up vector DB data.
+# 2) 它实现了样本文档写入并将元数据保存为 JSON; It implements sample ingestion and JSON export of metadata.
+# 3) 使用的 AI 技术涉及向量库持久化管理，支撑RAG的可重复性; The AI-related technique is vector store persistence for reproducible RAG.
+# 4) 在整个脚本集合中，它补充了工程化与运维层面的步骤; In the full set, it adds the engineering/ops perspective.
+# 5) 它与 init_vectordb.py、store_documents.py 配合，完成存储生命周期闭环; It complements init_vectordb.py and store_documents.py to complete the storage lifecycle.
 """
 Save Vector Database to File
 Demonstrate file persistence for ChromaDB

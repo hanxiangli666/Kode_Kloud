@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本对比 grep、TF-IDF 与 BM25 三种检索方法; This script compares grep, TF-IDF, and BM25 retrieval.
+# 2) 它实现了三种评分流程并输出各自排名; It implements three scoring pipelines and prints rankings.
+# 3) 使用的 AI 技术包括 TF-IDF 与 BM25 等经典信息检索算法; AI techniques include TF-IDF and BM25 classical IR.
+# 4) 在整个学习脚本中，它是方法对比与评估的中间环节; In the learning sequence, it is the evaluation midpoint.
+# 5) 它与语义与向量检索脚本形成横向对比，明确升级方向; It provides a lateral comparison against semantic and vector search.
 """
 Compare Search Methods
 Demonstrates the differences between grep, TF-IDF, and BM25

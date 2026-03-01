@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示使用本地嵌入进行语义检索; This script demonstrates semantic search with local embeddings.
+# 2) 它实现了文档与查询向量化并计算相似度; It implements document/query embeddings and similarity scoring.
+# 3) 使用的 AI 技术是句向量模型与向量相似度匹配; AI techniques used are sentence embeddings and similarity matching.
+# 4) 在学习流程中，它是从关键词检索过渡到语义检索的关键示例; In the learning flow, it is the key step from lexical to semantic search.
+# 5) 它与 keyword_limitation_demo.py 形成对照，并为 vector_search_demo.py 铺垫; It contrasts the keyword limitation demo and sets up vector search.
 """
 Semantic Search Demo using Local Embeddings
 Uses sentence-transformers for semantic similarity

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示基于 BM25 的传统词项检索; This script demonstrates classic BM25 term-based retrieval.
+# 2) 它实现了文档分词、建索引并对查询评分; It implements tokenization, index scoring, and result ranking.
+# 3) 使用的 AI 技术为信息检索算法 BM25，属于非语义检索基线; The AI-related technique is BM25 IR, a non-semantic baseline.
+# 4) 在本目录中，它用于对比向量检索与混合检索的效果; In this folder, it is a comparison point for vector and hybrid search.
+# 5) 它与 TF-IDF 和语义检索脚本共同构成传统检索对照组; It forms the traditional-retrieval control group with TF-IDF and keyword demos.
 """
 Simple BM25 Search Demo
 """

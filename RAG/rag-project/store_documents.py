@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本将 TechCorp 文档批量写入向量库; This script ingests TechCorp documents into a vector database.
+# 2) 它实现了读取文档、生成嵌入并写入集合; It implements document loading, embedding, and storage.
+# 3) 使用的 AI 技术是句向量嵌入与向量库索引构建; AI techniques include embeddings and vector DB indexing.
+# 4) 在学习流程中，它是从概念到实际数据落库的关键一步; In the learning flow, it is the key step from concept to ingestion.
+# 5) 它与 vector_search_demo.py 和 semantic_search_demo.py 形成检索流水线; It forms the retrieval pipeline with vector_search_demo.py and semantic_search_demo.py.
 """
 Store TechCorp Documents in Vector Database
 Simple document ingestion using ChromaDB

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本用于检查并准备本实验所需运行环境; This script verifies and prepares the environment for the lab.
+# 2) 它实现了 Python 版本与依赖包的检测与安装; It implements checks and installs for Python and dependencies.
+# 3) 使用的 AI 相关技术是为向量检索与切分工具链做依赖保障; The AI-related role is ensuring dependencies for chunking and retrieval tools.
+# 4) 在整个脚本集合中，它是所有实验脚本的前置步骤; In the full set, it is the prerequisite for all other demos.
+# 5) 它与其它脚本是支撑关系，确保学习流程可顺利执行; It supports the rest so the learning flow runs smoothly.
 """
 Environment Verification Script for Document Chunking Lab
 Automatically installs missing packages and verifies the environment.
@@ -7,6 +12,9 @@ Automatically installs missing packages and verifies the environment.
 import os
 import sys
 import subprocess
+from pathlib import Path
+import importlib.util
+import importlib.metadata
 
 # 本实验所需包 / Required packages for this lab
 REQUIRED_PACKAGES = [
@@ -28,29 +36,41 @@ def check_python_version():
 
 # 检查虚拟环境 / Check virtual environment
 def check_virtual_env():
-    """Check if running in virtual environment"""
+    """Check if running in virtual environment (venv or conda)"""
     print("\n🐍 Virtual Environment Check:")
 
-    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
-        print(f"  ✅ Virtual environment active: {sys.prefix}")
+    in_venv = hasattr(sys, 'real_prefix') or (
+        hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+    )
+    conda_env = os.environ.get("CONDA_DEFAULT_ENV")
+
+    if in_venv or conda_env:
+        active_env = conda_env if conda_env else sys.prefix
+        print(f"  ✅ Virtual environment active: {active_env}")
         return True
-    else:
-        print("  ❌ NOT running in virtual environment!")
-        print("\n" + "="*60)
-        print("⚠️  CRITICAL: You MUST activate the virtual environment!")
-        print("\n📌 Run these commands:")
-        print("   cd /home/lab-user/rag-project")
-        print("   source venv/bin/activate")
-        print("="*60)
-        return False
+
+    print("  ❌ NOT running in virtual environment!")
+    print("\n" + "="*60)
+    print("⚠️  CRITICAL: You MUST activate the virtual environment!")
+    print("\n📌 Run these commands in PowerShell:")
+    print("   conda activate final_gpu_env")
+    print(f"   cd {Path(__file__).resolve().parent}")
+    print("="*60)
+    return False
 
 # 检查包是否可导入 / Check if a package can be imported
 def check_package_installed(import_name):
-    """Check if a package can be imported"""
-    try:
-        __import__(import_name.split('.')[0])
+    """Check if a package can be imported or at least discovered"""
+    module_name = import_name.split(".")[0]
+
+    # Avoid importing heavy modules; spec check is safer on Windows
+    if importlib.util.find_spec(module_name) is not None:
         return True
-    except ImportError:
+
+    try:
+        __import__(module_name)
+        return True
+    except Exception:
         return False
 
 # 安装缺失包 / Install missing packages
@@ -107,10 +127,9 @@ def check_and_install_packages():
     for package_name, import_name in REQUIRED_PACKAGES:
         if check_package_installed(import_name):
             try:
-                module = __import__(import_name.split('.')[0])
-                version = getattr(module, '__version__', 'installed')
+                version = importlib.metadata.version(package_name)
                 print(f"  ✅ {package_name} (v{version})")
-            except:
+            except Exception:
                 print(f"  ✅ {package_name}")
             installed_packages.append(package_name)
         else:
@@ -157,12 +176,14 @@ def check_api_config():
         print(f"  ✅ OPENAI_API_KEY is configured ({len(api_key)} chars)")
     else:
         print("  ⚠️  OPENAI_API_KEY not found (needed for Task 6: Agentic Chunking)")
-        print("      Run: source ~/.bash_profile")
+        print("      PowerShell: $env:OPENAI_API_KEY='your_key_here'")
+        print("      Or persist: setx OPENAI_API_KEY \"your_key_here\"")
 
     if api_base:
         print(f"  ✅ OPENAI_API_BASE: {api_base}")
     else:
         print("  ⚠️  OPENAI_API_BASE not found (needed for Task 6: Agentic Chunking)")
+        print("      PowerShell: $env:OPENAI_API_BASE='https://api.openai.com/v1'")
 
     # API 配置非必需 / API config is optional for most tasks
     return True
@@ -199,31 +220,32 @@ def check_spacy_model():
     
     try:
         import spacy
-        try:
-            nlp = spacy.load("en_core_web_sm")
-            print("  ✅ spaCy English model (en_core_web_sm) loaded")
-            return True
-        except OSError:
-            print("  ⚠️  spaCy model not found, downloading...")
-            try:
-                result = subprocess.run(
-                    [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
-                    capture_output=True,
-                    text=True,
-                    check=False
-                )
-                if result.returncode == 0:
-                    print("  ✅ spaCy model downloaded successfully")
-                    return True
-                else:
-                    print("  ⚠️  Could not download spaCy model (sentence chunking will use fallback)")
-                    return True  # 非关键 / Not critical
-            except Exception as e:
-                print(f"  ⚠️  Could not download spaCy model: {e}")
-                return True  # 非关键 / Not critical
-    except ImportError:
-        print("  ❌ spaCy not installed")
+    except Exception as e:
+        print(f"  ❌ spaCy import failed: {e}")
+        print("     Hint: try 'pip install --upgrade click typer spacy'")
         return False
+
+    try:
+        nlp = spacy.load("en_core_web_sm")
+        print("  ✅ spaCy English model (en_core_web_sm) loaded")
+        return True
+    except OSError:
+        print("  ⚠️  spaCy model not found, downloading...")
+        try:
+            result = subprocess.run(
+                [sys.executable, "-m", "spacy", "download", "en_core_web_sm"],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+            if result.returncode == 0:
+                print("  ✅ spaCy model downloaded successfully")
+                return True
+            print("  ⚠️  Could not download spaCy model (sentence chunking will use fallback)")
+            return True  # 非关键 / Not critical
+        except Exception as e:
+            print(f"  ⚠️  Could not download spaCy model: {e}")
+            return True  # 非关键 / Not critical
 
 # 主流程 / Main entry
 def main():
@@ -279,9 +301,9 @@ def main():
 
     # 所有检查通过则写标记 / Create marker file if all checks pass
     if all_passed:
-        marker_dir = "/home/lab-user/rag-project"
-        os.makedirs(marker_dir, exist_ok=True)
-        with open(f"{marker_dir}/environment_verified.txt", "w") as f:
+        marker_dir = Path(__file__).resolve().parent
+        marker_dir.mkdir(parents=True, exist_ok=True)
+        with open(marker_dir / "environment_verified.txt", "w", encoding="utf-8") as f:
             f.write("ENVIRONMENT_VERIFIED")
 
         print("\n" + "="*60)

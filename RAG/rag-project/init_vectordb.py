@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本初始化 ChromaDB 并验证嵌入维度; This script initializes ChromaDB and validates embedding dimensions.
+# 2) 它实现了向量库创建、模型加载与简单写入验证; It implements DB creation, model loading, and a write test.
+# 3) 使用的 AI 技术包括句向量嵌入与向量数据库存储; AI techniques include embeddings and vector DB storage.
+# 4) 在学习链路中，它是后续存储与检索脚本的基础步骤; In the learning path, it is the foundation for later storage and search.
+# 5) 它与 store_documents.py 和 vector_search_demo.py 构成环境就绪的起点; It serves as the starting point for ingestion and search demos.
 """
 Initialize ChromaDB Vector Database
 Simple setup for storing and searching embeddings

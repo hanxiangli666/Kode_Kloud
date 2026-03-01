@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示基于 TF-IDF 的关键词检索流程; This script demonstrates keyword retrieval using TF-IDF.
+# 2) 它实现了向量化、相似度计算与排名输出; It implements vectorization, similarity scoring, and ranking output.
+# 3) 使用的 AI 技术是经典的 TF-IDF 统计模型; The AI technique is the classical TF-IDF statistical model.
+# 4) 在整体脚本中，它是与 BM25 并列的传统检索基线; In the full set, it is a traditional baseline alongside BM25.
+# 5) 它与 keyword_limitation_demo.py 一起说明词项方法的边界; It pairs with keyword_limitation_demo.py to show lexical limits.
 """
 Simple TF-IDF Search Demo
 """

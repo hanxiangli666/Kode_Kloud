@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示让大模型按语义分段的智能切分流程; This script demonstrates LLM-guided semantic chunking.
+# 2) 它实现了提示驱动的主题切分并与基础字符切分做对比; It implements prompt-driven topic splitting and contrasts it with basic chunking.
+# 3) 使用的 AI 技术包括 LLM 推理与文本切分器联动; AI techniques used include LLM reasoning paired with a text splitter.
+# 4) 在本目录的学习链路中，它是高级切分的阶段性总结; In the learning sequence, it serves as the advanced chunking milestone.
+# 5) 它与其它脚本的关系是提供高质量分块以提升后续检索与RAG效果; It provides higher-quality chunks that improve later retrieval and RAG steps.
 """
 Agentic Chunking Demo
 Using LLM to intelligently split documents based on semantic meaning

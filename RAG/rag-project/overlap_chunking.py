@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示切块重叠如何保留上下文; This script demonstrates how chunk overlap preserves context.
+# 2) 它实现了无重叠与有重叠切分的对比输出; It implements a side-by-side comparison of overlap settings.
+# 3) 使用的 AI 技术是文本切分策略优化，为向量检索提升召回; The AI technique is chunking strategy tuning for better retrieval.
+# 4) 在学习路径中，它是从基础切分走向质量提升的一步; In the learning path, it is a quality-improvement step beyond basics.
+# 5) 它与 basic_chunking.py 和 sentence_chunking.py 形成渐进式改进链条; It forms a progressive improvement chain with basic and sentence chunking.
 """
 Overlap Chunking Demo
 Demonstrates the importance of overlap for context preservation

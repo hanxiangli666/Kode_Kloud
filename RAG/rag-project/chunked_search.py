@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本展示向量检索在切分与不切分时的差异; This script shows vector search with and without chunking.
+# 2) 它实现了两种集合并对相同文档执行检索实验; It implements two collections and runs parallel search experiments.
+# 3) 使用的 AI 技术包括句向量嵌入与向量数据库相似度检索; AI techniques used include embeddings and vector DB similarity search.
+# 4) 在学习链路中，它连接了切分概念与向量检索效果; In the learning path, it bridges chunking concepts to retrieval outcomes.
+# 5) 它与 chunking_problem_demo.py 形成前后呼应，验证切分的必要性; It complements the chunking problem demo to validate why chunking matters.
 """
 Chunked Vector Search Demo
 Compare search performance with and without chunking

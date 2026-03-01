@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示最基础的字符级分块流程; This script demonstrates the most basic character-level chunking flow.
+# 2) 它实现了基于长度与分隔符的递归切分; It implements recursive splitting by length and separators.
+# 3) 使用的 AI 技术主要是文本切分预处理，为后续向量化做准备; The AI-related technique here is preprocessing for later embeddings.
+# 4) 在整个脚本集合中，它是最早的基线示例; Within the set, it is the earliest baseline example.
+# 5) 它与后续高级切分脚本形成对照，体现由简单到复杂的学习路径; It contrasts with later advanced chunking to show the progression.
 """
 Basic Document Chunking Demo
 Using LangChain's RecursiveCharacterTextSplitter

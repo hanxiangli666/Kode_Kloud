@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本演示基于句子边界的更自然切分; This script demonstrates sentence-aware chunking.
+# 2) 它实现了 spaCy 分句与基础切分的对比流程; It implements a spaCy-based sentence split contrasted with basic chunking.
+# 3) 使用的 AI 技术是 NLP 句法/分句模型，为语义完整性服务; The AI technique is NLP sentence boundary detection for coherence.
+# 4) 在整体脚本中，它是切分质量优化的重要环节; In the overall set, it is an important chunking quality upgrade.
+# 5) 它与 overlap_chunking.py 和 agentic_chunking_demo.py 共同构成高级切分梯度; It forms an advanced chunking gradient with overlap and agentic demos.
 """
 Sentence-Aware Chunking Demo
 Using spaCy for better sentence boundary detection

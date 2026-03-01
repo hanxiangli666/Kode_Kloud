@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# 1) 该脚本提供读取 TechCorp 文档的通用工具函数; This script provides shared utilities for loading TechCorp documents.
+# 2) 它实现了文档发现、读取与摘要展示逻辑; It implements file discovery, reading, and summary display.
+# 3) 使用的 AI 相关技术是为检索与嵌入流水线提供数据入口; The AI-related role is data ingestion for retrieval and embedding pipelines.
+# 4) 在整个脚本集合中，它是被多处复用的基础模块; In the overall set, it is a foundational module reused across demos.
+# 5) 它与搜索与切分脚本形成支撑关系，保证数据一致性; It supports search and chunking scripts to keep data consistent.
 """
 Common utilities for RAG search methods
 """
