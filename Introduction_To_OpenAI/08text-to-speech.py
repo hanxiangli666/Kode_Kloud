@@ -1,5 +1,4 @@
 import os
-from gtts import gTTS
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -14,10 +13,14 @@ client = OpenAI(api_key=api_key)
 
 prompt = "What is the capital of France?"
 
-def text_to_speech(text, lang='en'):
-    tts = gTTS(text=text, lang=lang, slow=False)
-    tts.save("tts_example.mp3")
-    os.system("start tts_example.mp3")  # For macOS, use "afplay". For Windows, use "start" or "wmplayer".
+def text_to_speech(text):
+    with client.audio.speech.with_streaming_response.create(
+        model="tts-1",
+        voice="alloy",  # 可选: alloy, echo, fable, onyx, nova, shimmer
+        input=text
+    ) as response:
+        response.stream_to_file("tts_example.mp3")
+    os.system("start tts_example.mp3")  # For Windows
 
 
 def generate_text(prompt):
@@ -34,4 +37,4 @@ def generate_and_speak(prompt):
     print("Generated Text:", generated_text)
     text_to_speech(generated_text)
 
-print(generate_and_speak(prompt))
+generate_and_speak(prompt)
