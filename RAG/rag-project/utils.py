@@ -11,6 +11,10 @@ Common utilities for RAG search methods
 import os
 import glob
 
+# ...existing code...
+import os
+import glob
+
 # 读取 TechCorp 文档 / Read TechCorp documents
 def read_techcorp_docs():
     """Read all documents from techcorp-docs directory"""
@@ -18,10 +22,12 @@ def read_techcorp_docs():
     doc_paths = []
     
     # 尝试多种路径 / Try different possible paths
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     possible_paths = [
-        "/home/lab-user/techcorp-docs/**/*.md",  # Lab environment
-        "techcorp-docs/**/*.md",                  # Local development
-        "./techcorp-docs/**/*.md"                # Current directory
+        "/home/lab-user/techcorp-docs/**/*.md",                 # Lab environment
+        os.path.join(project_root, "techcorp-docs", "**", "*.md"),  # Windows/macOS/Linux
+        "techcorp-docs/**/*.md",                                # Local development
+        "./techcorp-docs/**/*.md"                               # Current directory
     ]
     
     # 搜索匹配文件 / Find matching files
@@ -30,6 +36,7 @@ def read_techcorp_docs():
         files = glob.glob(pattern, recursive=True)
         if files:
             break
+# ...existing code...
     
     # 读取文件内容 / Read file contents
     for file_path in files:
