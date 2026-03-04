@@ -21,7 +21,7 @@ from openai import OpenAI
 # Load environment variables from .env file
 # This allows us to store sensitive information (like API keys) locally
 # without uploading them to the git repository
-load_dotenv()
+load_dotenv(override=True)
 
 # ===== 第二步 / Step 2: 获取和初始化 OpenAI 客户端 / Get and Initialize OpenAI Client =====
 # 从环境变量中获取 OpenAI API Key
