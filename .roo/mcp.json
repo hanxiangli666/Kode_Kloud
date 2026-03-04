@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "flight-booking": {
+      "command": "E:\\02_Projects\\22_Kode_Kloud\\MCP_Flight_Server\\venv\\Scripts\\python.exe",
+      "args": ["server.py"],
+      "cwd": "E:\\02_Projects\\22_Kode_Kloud\\MCP_Flight_Server"
+    }
+  }
+}
