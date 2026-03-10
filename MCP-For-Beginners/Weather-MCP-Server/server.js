@@ -2,8 +2,10 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { RequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { z } from 'zod';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import fetch from 'node-fetch';
 
 // Weather API base URL
@@ -82,22 +84,15 @@ const server = new Server({
   }
 });
 
-// Define request schemas
-const ToolsCallRequestSchema = RequestSchema.extend({
-  method: z.literal('tools/call'),
-  params: z.object({
-    name: z.string(),
-    arguments: z.record(z.any())
-  })
-});
-
-const ToolsListRequestSchema = RequestSchema.extend({
-  method: z.literal('tools/list'),
-  params: z.object({}).optional()
+// Handle tool listing
+server.setRequestHandler(ListToolsRequestSchema, async () => {
+  return {
+    tools
+  };
 });
 
 // Handle tool calls
-server.setRequestHandler(ToolsCallRequestSchema, async (request, extra) => {
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   switch (name) {
@@ -220,13 +215,6 @@ server.setRequestHandler(ToolsCallRequestSchema, async (request, extra) => {
     default:
       throw new Error(`Unknown tool: ${name}`);
   }
-});
-
-// Handle tool listing
-server.setRequestHandler(ToolsListRequestSchema, async (request, extra) => {
-  return {
-    tools
-  };
 });
 
 // Start the server

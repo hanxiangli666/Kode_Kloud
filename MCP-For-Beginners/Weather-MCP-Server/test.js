@@ -7,11 +7,15 @@ import { spawn } from 'child_process';
 async function testWeatherMCP() {
   // Spawn the MCP server process
   const serverProcess = spawn('node', ['server.js'], {
-    stdio: ['pipe', 'pipe', 'pipe']
+    stdio: ['pipe', 'pipe', 'pipe'],
+    cwd: import.meta.dirname || process.cwd()
   });
 
   // Create client transport
-  const transport = new StdioClientTransport(serverProcess.stdin, serverProcess.stdout);
+  const transport = new StdioClientTransport({
+    reader: serverProcess.stdout,
+    writer: serverProcess.stdin
+  });
   
   // Create MCP client
   const client = new Client({
