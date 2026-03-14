@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>METAR Reader — Plain-English Airport Weather</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ─── Header / 页眉 ─── -->
+  <header class="site-header">
+    <div class="container">
+      <div class="logo">✈️ METAR Reader</div>
+      <p class="tagline">Airport weather reports decoded into plain English</p>
+    </div>
+  </header>
+
+  <!-- ─── Search section / 搜索区域 ─── -->
+  <main class="container">
+    <section class="search-card">
+      <label for="station-input" class="search-label">Enter Airport Code (ICAO)</label>
+      <div class="search-row">
+        <input
+          id="station-input"
+          type="text"
+          maxlength="4"
+          placeholder="e.g. KHIO, KSEA, EGLL"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button id="search-btn">Get Weather</button>
+      </div>
+      <p class="hint">
+        Use the 4-letter ICAO code. US airports start with <strong>K</strong>
+        (e.g. <strong>KLAX</strong>, <strong>KJFK</strong>).
+        European airports often start with <strong>E</strong> or <strong>L</strong>.
+      </p>
+    </section>
+
+    <!-- ─── Loading spinner / 加载中提示 ─── -->
+    <div id="loading" class="hidden">
+      <div class="spinner"></div>
+      <p>Fetching weather data…</p>
+    </div>
+
+    <!-- ─── Error message / 错误信息 ─── -->
+    <div id="error-box" class="error-box hidden"></div>
+
+    <!-- ─── Weather result card / 天气结果卡片 ─── -->
+    <section id="result-card" class="result-card hidden">
+
+      <!-- Station + emoji headline / 机场 + emoji 标题 -->
+      <div class="result-header">
+        <span id="result-emoji" class="weather-emoji">☀️</span>
+        <div>
+          <h2 id="result-station"></h2>
+          <p id="result-time" class="muted"></p>
+        </div>
+      </div>
+
+      <!-- Plain-English summary / 普通英语摘要 -->
+      <div class="summary-box">
+        <p id="result-summary"></p>
+      </div>
+
+      <!-- Detail grid / 详情网格 -->
+      <div class="detail-grid">
+
+        <div class="detail-tile" id="tile-sky">
+          <div class="tile-icon">🌤</div>
+          <div class="tile-label">Sky</div>
+          <div class="tile-value" id="val-sky">—</div>
+        </div>
+
+        <div class="detail-tile" id="tile-temp">
+          <div class="tile-icon">🌡️</div>
+          <div class="tile-label">Temperature</div>
+          <div class="tile-value" id="val-temp">—</div>
+        </div>
+
+        <div class="detail-tile">
+          <div class="tile-icon">💧</div>
+          <div class="tile-label">Humidity</div>
+          <div class="tile-value" id="val-humidity">—</div>
+        </div>
+
+        <div class="detail-tile">
+          <div class="tile-icon">💨</div>
+          <div class="tile-label">Wind</div>
+          <div class="tile-value" id="val-wind">—</div>
+        </div>
+
+        <div class="detail-tile">
+          <div class="tile-icon">👁️</div>
+          <div class="tile-label">Visibility</div>
+          <div class="tile-value" id="val-vis">—</div>
+        </div>
+
+        <div class="detail-tile">
+          <div class="tile-icon">📊</div>
+          <div class="tile-label">Pressure</div>
+          <div class="tile-value" id="val-alt">—</div>
+        </div>
+
+      </div><!-- /detail-grid -->
+
+      <!-- Raw METAR accordion / 原始 METAR 折叠区 -->
+      <details class="raw-section">
+        <summary>Show raw METAR</summary>
+        <code id="raw-metar"></code>
+      </details>
+
+    </section><!-- /result-card -->
+
+    <!-- ─── Quick picks / 快速选择 ─── -->
+    <section class="quick-picks">
+      <p class="quick-label">Quick picks:</p>
+      <div class="quick-btns">
+        <button class="quick-btn" data-code="KHIO">KHIO — Hillsboro, OR</button>
+        <button class="quick-btn" data-code="KSEA">KSEA — Seattle</button>
+        <button class="quick-btn" data-code="KLAX">KLAX — Los Angeles</button>
+        <button class="quick-btn" data-code="KJFK">KJFK — New York JFK</button>
+        <button class="quick-btn" data-code="KORD">KORD — Chicago O'Hare</button>
+        <button class="quick-btn" data-code="EGLL">EGLL — London Heathrow</button>
+        <button class="quick-btn" data-code="ZBAA">ZBAA — Beijing Capital</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Footer / 页脚 ─── -->
+  <footer class="site-footer">
+    <p>Data source: <a href="https://aviationweather.gov" target="_blank" rel="noopener">Aviation Weather Center</a> &nbsp;|&nbsp; METAR data refreshes ~30 min</p>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
