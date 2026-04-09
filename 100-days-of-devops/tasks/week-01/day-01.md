@@ -5,6 +5,7 @@
 Configure a system user account with shell access disabled. This type of account serves automation workflows and service operations that don't need interactive terminal sessions.
 
 **Technical Specifications:**
+
 - User account: service/system user type
 - Shell assignment: /usr/sbin/nologin (prevents interactive login)
 - Home directory: automatically created
@@ -70,16 +71,19 @@ These additional commands provide comprehensive verification and management capa
 ## Key Concepts
 
 **Shell Types:**
+
 - `/bin/bash`: Standard interactive shell for regular users
 - `/usr/sbin/nologin`: Non-interactive shell that denies login access
 - `/bin/false`: Another option that denies access and exits immediately
 
 **Security Best Practices:**
+
 - Service accounts and automated processes should always use non-interactive shells
 - This prevents unauthorized interactive access even if credentials are compromised
 - Follows the principle of least privilege by limiting account capabilities
 
 **User Management Files:**
+
 - `/etc/passwd`: Stores user account information (world-readable)
 - `/etc/shadow`: Stores encrypted passwords (root-only access)
 - `/etc/group`: Stores group information
